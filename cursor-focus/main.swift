@@ -10,53 +10,23 @@ import Foundation
 import AppKit
 
 
-var displayCount:UInt32 = 0
-var activeCount:UInt32 = 0      //used as a parameter, but value is ignored
-CGGetActiveDisplayList(0, nil, &displayCount)
-var displayIDList = Array<CGDirectDisplayID>(repeating: kCGNullDirectDisplay, count: Int(displayCount))
-CGGetActiveDisplayList(displayCount, &(displayIDList), &activeCount)
-
-struct Display {
-    let id: CGDirectDisplayID
-    let bounds: CGRect
-}
-
-
-let displays = displayIDList.map{displayId -> Display in
-        let bounds = CGDisplayBounds(displayId)
-        return Display(
-            id: displayId,
-            bounds: CGDisplayBounds(displayId)
-        )
-    }
-
-print(["displays":displays])
-
-
-func focus(display: Display) {
-    let pt = CGPoint(
-        x: display.bounds.origin.x,
-        y: display.bounds.origin.y +  display.bounds.size.height/2
-    )
-
-    CGEvent(mouseEventSource: .none, mouseType: .leftMouseDown, mouseCursorPosition:
-        pt, mouseButton: .left)?.post(tap: .cghidEventTap)
-    CGEvent(mouseEventSource: .none, mouseType: .leftMouseUp, mouseCursorPosition: pt, mouseButton: .left)?.post(tap: .cghidEventTap)
-    CGEvent(mouseEventSource: .none, mouseType: .mouseMoved, mouseCursorPosition: mslocation, mouseButton: .left)?.post(tap: .cghidEventTap)
-}
+let displays = Display.all
+print(Window.all.map{$0.description}.joined(separator: "\n"))
 
 var mslocation=CGPoint()
-var eventTargetPid: Int32?
-
-let tap = CGEvent.tapCreate(tap: .cgAnnotatedSessionEventTap, place: .headInsertEventTap, options: .listenOnly, eventsOfInterest: CGEventMask(1 << CGEventType.mouseMoved.rawValue), callback: { (tapProxy, type, event, _:UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? in
-    mslocation = event.location
-    eventTargetPid = Int32(event.getIntegerValueField(.eventTargetUnixProcessID))
-    return nil
-}, userInfo: nil)!
+var dockActive = false
 
 let dockPid = NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.dock").first?.processIdentifier
 
+let tap = CGEvent.tapCreate(tap: .cgAnnotatedSessionEventTap, place: .headInsertEventTap, options: .listenOnly, eventsOfInterest: CGEventMask(1 << CGEventType.mouseMoved.rawValue), callback: { (tapProxy, type, event, _:UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? in
+    mslocation = event.location
+    dockActive = Int32(event.getIntegerValueField(.eventTargetUnixProcessID)) == dockPid
+    return nil
+}, userInfo: nil)!
+
+
 var currentDisplay: Display?
+var currentWindow: Window?
 
 CFRunLoopAddSource(
     CFRunLoopGetCurrent(),
@@ -64,21 +34,21 @@ CFRunLoopAddSource(
     .commonModes
 )
 
-let delaySeconds = 0.2
+let delaySeconds = 1.0
 CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreateWithHandler(
     kCFAllocatorDefault,
     CFAbsoluteTimeGetCurrent() + delaySeconds, delaySeconds, 0, 0,
     { timer in
-        guard eventTargetPid != dockPid else {return}
+        guard !dockActive else {return}
+       print("\n\n")
+        print(Window.all.map{$0.description}.joined(separator: "\n"))
+        
+        guard let w = Window.at(mslocation) else {return}
+        guard w.id != currentWindow?.id else {return}
 
-        let display = displays.first(where: {$0.bounds.contains(mslocation)})
-        guard currentDisplay?.id != display?.id else {return}
-
-        currentDisplay = display
-        guard let d = display else {return}
-        focus(display: d)
-
-        print("Now in display \(d.id)")
+        currentWindow = w
+        w.focus()
+        print("Focus \(w)")
     }
 ), .commonModes)
 

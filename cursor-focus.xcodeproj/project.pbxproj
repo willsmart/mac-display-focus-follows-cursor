@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE24934124C8C113009BCF06 /* Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE24934024C8C113009BCF06 /* Display.swift */; };
+		BE24934324C8C376009BCF06 /* Window.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE24934224C8C376009BCF06 /* Window.swift */; };
+		BE24934524C8C568009BCF06 /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE24934424C8C568009BCF06 /* Application.swift */; };
 		BEFC327724C78CB400D09A14 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFC327624C78CB400D09A14 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +26,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BE24934024C8C113009BCF06 /* Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Display.swift; sourceTree = "<group>"; };
+		BE24934224C8C376009BCF06 /* Window.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.swift; sourceTree = "<group>"; };
+		BE24934424C8C568009BCF06 /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		BEFC327324C78CB400D09A14 /* cursor-focus */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cursor-focus"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEFC327624C78CB400D09A14 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,6 +64,9 @@
 			isa = PBXGroup;
 			children = (
 				BEFC327624C78CB400D09A14 /* main.swift */,
+				BE24934024C8C113009BCF06 /* Display.swift */,
+				BE24934224C8C376009BCF06 /* Window.swift */,
+				BE24934424C8C568009BCF06 /* Application.swift */,
 			);
 			path = "cursor-focus";
 			sourceTree = "<group>";
@@ -120,7 +129,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE24934124C8C113009BCF06 /* Display.swift in Sources */,
+				BE24934524C8C568009BCF06 /* Application.swift in Sources */,
 				BEFC327724C78CB400D09A14 /* main.swift in Sources */,
+				BE24934324C8C376009BCF06 /* Window.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
